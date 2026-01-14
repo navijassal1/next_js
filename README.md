@@ -20,33 +20,33 @@ This project uses next/font
  to automatically optimize and load Geist
 , a new font family for Vercel.
 
-## APP ROUTING
+# APP ROUTING
 
-This project uses folder-based routing. The folder structure inside the app directory determines your application’s routes automatically.
+- This project uses folder-based routing. The folder structure inside the app directory determines your application’s routes automatically.
 
-# How It Works
+### How It Works
 
-The name of a folder becomes the route path.
+- The name of a folder becomes the route path.
 
 The page.js or page.tsx file inside a folder defines what content is displayed at that route.
 
 # Example Folder Structure
-app/
-├─ page.tsx          // Renders the homepage
-├─ posts/
-│  └─ page.tsx       // Renders the posts page
+- app/
+- ├─ page.tsx          // Renders the homepage
+- ├─ posts/
+- │  └─ page.tsx       // Renders the posts page
 
 # Resulting Routes
-Folder / File	Route Path
-app/page.tsx	/ (Homepage)
-app/posts/page.tsx	/posts
-Notes
+- Folder / File	Route Path
+- app/page.tsx	/ (Homepage)
+- app/posts/page.tsx	/posts
+- Notes
 
-Nested folders create nested routes.
+### Nested folders create nested routes.
 
-Simply adding a new folder with a page.tsx file automatically creates a new route.
+- Simply adding a new folder with a page.tsx file automatically creates a new route.
 
-Learn More
+# Learn More
 
 To learn more about Next.js, take a look at the following resources:
 
@@ -59,7 +59,7 @@ Learn Next.js
 You can check out the Next.js GitHub repository
  - your feedback and contributions are welcome!
 
-Deploy on Vercel
+## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the Vercel Platform
  from the creators of Next.js.
