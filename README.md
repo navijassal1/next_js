@@ -32,9 +32,9 @@ The page.js or page.tsx file inside a folder defines what content is displayed a
 
 # Example Folder Structure
 - app/
- ├─ page.tsx          // Renders the homepage
- ├─ posts/
- │  └─ page.tsx       // Renders the posts page
+- ├─ page.tsx          // Renders the homepage
+- ├─ posts/
+- │  └─ page.tsx       // Renders the posts page
 
 # Resulting Routes
 - Folder / File	Route Path
