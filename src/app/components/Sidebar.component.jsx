@@ -1,48 +1,321 @@
+"use client"
+
 import { userContext } from "@/context/user-context";
-import { useContext, useEffect } from "react";
+import { useContext, useState } from "react";
+import { HiChevronDown, HiChevronRight } from "react-icons/hi";
+import { HiOutlineUser, HiOutlineCog, HiOutlineCollection } from "react-icons/hi";
+import ListUsers from "./listUsers.component";
 
 export default function Sidebar() {
-    const { user } = useContext(userContext)
-    useEffect(()=>{
-        
-    },[user])
-    // Helper to check if user has a specific permission
-    const can = (resource, action) =>
-        user.permissions.some(p => p.resource === resource && p.action === action);
+    const { user,
+        listUsers,
+        handleListUsers,
+        can,
+        canHaveResoure,
+        sectionClasses,
+        buttonClasses,
+        iconClasses
+    } = useContext(userContext);
+    const [openSections, setOpenSections] = useState({
+        SYSTEM: false,
+        USER: false,
+        CATEGORY: false,
+    });
+    console.log(user, 'user in sidebar')
+    console.log(listUsers, 'listUsers')
+    const toggleSection = (section) => {
+        setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+    };
+
+
+
+
+
+    //   return (
+    //     // Sidebar container fixed width + full height (screen height)
+    //     <aside className="flex flex-col bg-slate-50 dark:bg-slate-900 min-h-full w-72 p-6 top-0">
+
+
+    //       {/* Sections */}
+    //       <nav className="flex flex-col grow overflow-auto">
+    //         {can("SYSTEM", "READ") && (
+    //           <div className={sectionClasses}>
+    //             <div
+    //               className="flex justify-between items-center cursor-pointer mb-2"
+    //               onClick={() => toggleSection("SYSTEM")}
+    //             >
+    //               <div className="flex items-center gap-2">
+    //                 <HiOutlineCog className={iconClasses} />
+    //                 <h3 className="text-black dark:text-white font-semibold text-lg">
+    //                   Admin
+    //                 </h3>
+    //               </div>
+    //               {openSections.SYSTEM ? (
+    //                 <HiChevronDown className={iconClasses} />
+    //               ) : (
+    //                 <HiChevronRight className={iconClasses} />
+    //               )}
+    //             </div>
+    //             {openSections.SYSTEM && (
+    //               <div className="flex flex-wrap gap-2 mt-2">
+    //                 {can("SYSTEM", "READ") && (
+    //                   <button className={`${buttonClasses} bg-green-500`}>List Admins</button>
+    //                 )}
+    //                 {can("SYSTEM", "CREATE") && (
+    //                   <button className={`${buttonClasses} bg-yellow-500`}>Create Admin</button>
+    //                 )}
+    //                 {can("SYSTEM", "UPDATE") && (
+    //                   <button className={`${buttonClasses} bg-blue-500`}>Edit Admin</button>
+    //                 )}
+    //                 {can("SYSTEM", "DELETE") && (
+    //                   <button className={`${buttonClasses} bg-red-500`}>Delete Admin</button>
+    //                 )}
+    //               </div>
+    //             )}
+    //           </div>
+    //         )}
+
+    //         {can("USER", "READ") && (
+    //           <div className={sectionClasses}>
+    //             <div
+    //               className="flex justify-between items-center cursor-pointer mb-2"
+    //               onClick={() => toggleSection("USER")}
+    //             >
+    //               <div className="flex items-center gap-2">
+    //                 <HiOutlineUser className={iconClasses} />
+    //                 <h3 className="text-black dark:text-white font-semibold text-lg">
+    //                   Users
+    //                 </h3>
+    //               </div>
+    //               {openSections.USER ? (
+    //                 <HiChevronDown className={iconClasses} />
+    //               ) : (
+    //                 <HiChevronRight className={iconClasses} />
+    //               )}
+    //             </div>
+    //             {openSections.USER && (
+    //               <div className="flex flex-wrap gap-2 mt-2">
+    //                 {can("USER", "READ") && (
+    //                   <button className={`${buttonClasses} bg-green-500`}>List Users</button>
+    //                 )}
+    //                 {can("USER", "CREATE") && (
+    //                   <button className={`${buttonClasses} bg-yellow-500`}>Create Users</button>
+    //                 )}
+    //                 {can("USER", "UPDATE") && (
+    //                   <button className={`${buttonClasses} bg-blue-500`}>Update Users</button>
+    //                 )}
+    //                 {can("USER", "DELETE") && (
+    //                   <button className={`${buttonClasses} bg-red-500`}>Delete Users</button>
+    //                 )}
+    //               </div>
+    //             )}
+    //           </div>
+    //         )}
+
+    //         {can("CATEGORY", "READ") && (
+    //           <div className={sectionClasses}>
+    //             <div
+    //               className="flex justify-between items-center cursor-pointer mb-2"
+    //               onClick={() => toggleSection("CATEGORY")}
+    //             >
+    //               <div className="flex items-center gap-2">
+    //                 <HiOutlineCollection className={iconClasses} />
+    //                 <h3 className="text-black dark:text-white font-semibold text-lg">
+    //                   Category
+    //                 </h3>
+    //               </div>
+    //               {openSections.CATEGORY ? (
+    //                 <HiChevronDown className={iconClasses} />
+    //               ) : (
+    //                 <HiChevronRight className={iconClasses} />
+    //               )}
+    //             </div>
+    //             {openSections.CATEGORY && (
+    //               <div className="flex flex-wrap gap-2 mt-2">
+    //                 {can("CATEGORY", "READ") && (
+    //                   <button className={`${buttonClasses} bg-green-500`}>List Category</button>
+    //                 )}
+    //                 {can("CATEGORY", "CREATE") && (
+    //                   <button className={`${buttonClasses} bg-yellow-500`}>Create Category</button>
+    //                 )}
+    //                 {can("CATEGORY", "UPDATE") && (
+    //                   <button className={`${buttonClasses} bg-blue-500`}>Update Category</button>
+    //                 )}
+    //                 {can("CATEGORY", "DELETE") && (
+    //                   <button className={`${buttonClasses} bg-red-500`}>Delete Category</button>
+    //                 )}
+    //               </div>
+    //             )}
+    //           </div>
+    //         )}
+    //       </nav>
+    //     </aside>
+    //   );
+
     return (
-        <div className="h-100 w-100 grid grid-cols-1 justify-center items-center">
-            {/* //  Show system management section if user can READ SYSTEM  */}
-            {can("SYSTEM", "READ") && (
-                <div className="bg-indigo-50 p-4 rounded-lg w-full max-w-md">
-                    <h3 className="text-black font-semibold mb-2">System Management</h3>
-                    {can("SYSTEM", "READ") && <button className="bg-green-500 text-white px-3 py-1 rounded">Read System</button>}
-                    {can("SYSTEM", "CREATE") && <button className="bg-yellow-500 text-white px-3 py-1 rounded">Add System</button>}
-                    {can("SYSTEM", "UPDATE") && <button className="bg-blue-500 text-white px-3 py-1 rounded ml-2">Update System</button>}
-                    {can("SYSTEM", "DELETE") && <button className="bg-red-500 text-white px-3 py-1 rounded ml-2">Delete System</button>}
-                </div>
-            )}
+        <div className="h-full w-full bg-amber-200 flex">
+            <aside className="flex flex-col bg-slate-50 dark:bg-slate-900 h-full w-90 p-6 top-0 border-amber-100">
 
-            {/* Users section */}
-            {can("USER", "READ") && (
-                <div className="bg-indigo-50 p-4 rounded-lg w-full max-w-md">
-                    <h3 className="text-black font-semibold mb-2">User Management</h3>
-                    {can("USER", "READ") && <button className="bg-green-500 text-white px-3 py-1 rounded">Read User</button>}
-                    {can("USER", "CREATE") && <button className="bg-yellow-500 text-white px-3 py-1 rounded">Add User</button>}
-                    {can("USER", "UPDATE") && <button className="bg-blue-500 text-white px-3 py-1 rounded ml-2">Update User</button>}
-                    {can("USER", "DELETE") && <button className="bg-red-500 text-white px-3 py-1 rounded ml-2">Delete User</button>}
-                </div>
-            )}
 
-            {/* Categories section */}
-            {can("CATEGORY", "READ") && (
-                <div className="bg-indigo-50 p-4 rounded-lg w-full max-w-md">
-                    <h3 className="text-black font-semibold mb-2">Category Management</h3>
-                    {can("CATEGORY", "READ") && <button className="bg-green-500 text-white px-3 py-1 rounded">Read Category</button>}
-                    {can("CATEGORY", "CREATE") && <button className="bg-yellow-500 text-white px-3 py-1 rounded">Add Category</button>}
-                    {can("CATEGORY", "UPDATE") && <button className="bg-blue-500 text-white px-3 py-1 rounded ml-2">Update Category</button>}
-                    {can("CATEGORY", "DELETE") && <button className="bg-red-500 text-white px-3 py-1 rounded ml-2">Delete Category</button>}
-                </div>
-            )}
+                {/* Sections */}
+                {canHaveResoure("SYSTEM")
+                    && (
+                        <button className={sectionClasses} onClick={handleListUsers}>List Admins</button>
+                    )
+                }
+
+                <nav className="flex flex-col grow overflow-auto border-amber-50">
+                    {can("SYSTEM", "READ") && (
+                        <div className={sectionClasses}>
+                            <div
+                                className="flex justify-between items-center cursor-pointer mb-2"
+                                onClick={() => toggleSection("SYSTEM")}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <HiOutlineCog className={iconClasses} />
+                                    <h3 className="text-black dark:text-white font-semibold text-lg">
+                                        Admin
+                                    </h3>
+                                </div>
+                                {openSections.SYSTEM ? (
+                                    <HiChevronDown className={iconClasses} />
+                                ) : (
+                                    <HiChevronRight className={iconClasses} />
+                                )}
+                            </div>
+                            {openSections.SYSTEM && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {can("SYSTEM", "READ") && (
+                                        <button className={`${buttonClasses} bg-green-500`}>List Admins</button>
+                                    )}
+                                    {can("SYSTEM", "CREATE") && (
+                                        <button className={`${buttonClasses} bg-yellow-500`}>Create Admin</button>
+                                    )}
+                                    {can("SYSTEM", "UPDATE") && (
+                                        <button className={`${buttonClasses} bg-blue-500`}>Edit Admin</button>
+                                    )}
+                                    {can("SYSTEM", "DELETE") && (
+                                        <button className={`${buttonClasses} bg-red-500`}>Delete Admin</button>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* {can('SYSTEM', 'READ')
+                            && (<button className={sectionClasses} onClick={handleListUsers}>List Users</button>)
+                        } */}
+
+                    {/* <div className="flex flex-wrap gap-2 mt-2">
+                        {can("CATEGORY", "READ") && (
+                            <button className={`${buttonClasses} bg-green-500`}>List Categories</button>
+                        )}
+                        {can("SYSTEM", "CREATE") && (
+                            <button className={`${buttonClasses} bg-yellow-500`}>Create Admin</button>
+                        )}
+                        {can("SYSTEM", "UPDATE") && (
+                            <button className={`${buttonClasses} bg-blue-500`}>Edit Admin</button>
+                        )}
+                        {can("SYSTEM", "DELETE") && (
+                            <button className={`${buttonClasses} bg-red-500`}>Delete Admin</button>
+                        )}
+                    </div> */}
+
+                    {canHaveResoure("USER")
+                        && (
+                            <button className={sectionClasses} onClick={handleListUsers}>List Users</button>
+                            // <div className={sectionClasses}>
+                            //     <div
+                            //         className="flex justify-between items-center cursor-pointer mb-2"
+                            //         onClick={() => toggleSection("USER")}
+                            //     >
+                            //         <div className="flex items-center gap-2">
+                            //             <HiOutlineUser className={iconClasses} />
+                            //             <h3 className="text-black dark:text-white font-semibold text-lg">
+                            //                 Users
+                            //             </h3>
+                            //         </div>
+                            //         {openSections.USER ? (
+                            //             <HiChevronDown className={iconClasses} />
+                            //         ) : (
+                            //             <HiChevronRight className={iconClasses} />
+                            //         )}
+                            //     </div>
+                            //     {openSections.USER && (
+                            //         <div className="flex flex-wrap gap-2 mt-2">
+                            //             {can("USER", "READ") && (
+                            //                 <button className={`${buttonClasses} bg-green-500`}>List Users</button>
+                            //             )}
+                            //             {can("USER", "CREATE") && (
+                            //                 <button className={`${buttonClasses} bg-yellow-500`}>Create Users</button>
+                            //             )}
+                            //             {can("USER", "UPDATE") && (
+                            //                 <button className={`${buttonClasses} bg-blue-500`}>Update Users</button>
+                            //             )}
+                            //             {can("USER", "DELETE") && (
+                            //                 <button className={`${buttonClasses} bg-red-500`}>Delete Users</button>
+                            //             )}
+                            //         </div>
+                            //     )}
+                            // </div>
+                        )
+                    }
+                    {canHaveResoure("CATEGORY")
+                        && (
+                            <button className={sectionClasses} onClick={handleListUsers}>List Categories</button>
+                            // <div className={sectionClasses}>
+                            //     <div
+                            //         className="flex justify-between items-center cursor-pointer mb-2"
+                            //         onClick={() => toggleSection("USER")}
+                            //     >
+                            //         <div className="flex items-center gap-2">
+                            //             <HiOutlineUser className={iconClasses} />
+                            //             <h3 className="text-black dark:text-white font-semibold text-lg">
+                            //                 Users
+                            //             </h3>
+                            //         </div>
+                            //         {openSections.USER ? (
+                            //             <HiChevronDown className={iconClasses} />
+                            //         ) : (
+                            //             <HiChevronRight className={iconClasses} />
+                            //         )}
+                            //     </div>
+                            //     {openSections.USER && (
+                            //         <div className="flex flex-wrap gap-2 mt-2">
+                            //             {can("USER", "READ") && (
+                            //                 <button className={`${buttonClasses} bg-green-500`}>List Users</button>
+                            //             )}
+                            //             {can("USER", "CREATE") && (
+                            //                 <button className={`${buttonClasses} bg-yellow-500`}>Create Users</button>
+                            //             )}
+                            //             {can("USER", "UPDATE") && (
+                            //                 <button className={`${buttonClasses} bg-blue-500`}>Update Users</button>
+                            //             )}
+                            //             {can("USER", "DELETE") && (
+                            //                 <button className={`${buttonClasses} bg-red-500`}>Delete Users</button>
+                            //             )}
+                            //         </div>
+                            //     )}
+                            // </div>
+                        )
+                    }
+                    {can("USER", "CREATE") && (
+                        <button className={`${buttonClasses} bg-indigo-600 hover:bg-indigo-700`}>
+                            + Create User
+                        </button>
+                    )}
+                </nav>
+            </aside>
+            <div className="w-full h-full bg-slate-100 dark:bg-slate-900 p-6">
+                {listUsers.length > 0
+                    &&
+                    <ListUsers />
+
+                }
+
+            </div>
+
+
         </div>
     )
 }

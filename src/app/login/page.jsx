@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import cookies from "js-cookie"
+import { axiosInstance } from "@/utils/axiosInstance"
 
 export default function LoginForm() {
 
@@ -50,38 +51,31 @@ export default function LoginForm() {
 		e.preventDefault()
 		setLoading(true)
 		try {
-			const res = await fetch("http://localhost:5000/auth/login", {
-				method: "POST",
-				credentials: 'include', //very important for recieve cookies
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(formData),
-			});
-			const data = await res.json()
-			if (res.ok) {
 
-				toast.success('Login Successfull')
+			const res = await axiosInstance.post("http://localhost:5000/auth/login", formData);
+			const data = res.data
+			console.log(data, 'data login')
+			if (res.status === 200) {
+
 				cookies.set('access_token', data.data.accessToken, { expires: 1 })
 				cookies.set('refresh_token', data.data.refreshToken, { expires: 20 })
+				toast.success('Login Successfull')
 
 				router.push('/dashboard')
-			} else {
-				if (data.errorMessage) {
-					console.log('-------ErrorMessage---------\n', data.errorMessage)
-					setErrors(data.errorMessage);
-				} else {
-					toast.error('Login Failed')
-				}
 			}
 		} catch (error) {
-			console.log("Error:", error);
-			toast.error("Something went wrong. Check console for details.");
+			// console.log("Error:", error);
+			if (error.response && error.response.data && error.response.data.errorMessage) {
+				setErrors(error.response.data.errorMessage);
+				console.log('-------ErrorMessage---------\n', error.response.data.errorMessage)
+			}
 		}
 		finally {
 			setLoading(false)
 		}
 	}
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-50 via-white to-purple-50 dark:from-black dark:via-gray-900 dark:to-black font-sans">
+		<div className="min-h-screen flex items-center justify-center bg-linear-to-b from-pink-50 via-white to-purple-50 dark:from-black dark:via-gray-900 dark:to-black font-sans">
 			<div className="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-10 sm:p-16 w-full max-w-md flex flex-col items-center">
 				{/* Logo */}
 				<h1 className="text-4xl font-bold text-green-600 dark:text-green-400 mb-6">

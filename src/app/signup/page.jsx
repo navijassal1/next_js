@@ -4,19 +4,20 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner"
+import { axiosInstance } from "@/utils/axiosInstance"
 
 
 export default function SignupForm() {
     const router = useRouter()
 
     const [formData, setFormData] = useState({
-        role:"",
-        first_name:"",
-        last_name:"",
-        username:"",
-        email:"",
-        password:"",
-        confirm_password:"",
+        role: "",
+        first_name: "",
+        last_name: "",
+        username: "",
+        email: "",
+        password: "",
+        confirm_password: "",
     });
 
     const [errors, setErrors] = useState({});
@@ -25,52 +26,36 @@ export default function SignupForm() {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Clear previous errors
         setErrors({});
-
         setLoading(true);
-
         try {
-            const res = await fetch("http://localhost:5000/auth/signup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-            });
+            const res = await axiosInstance.post("/auth/signup", formData);
 
-            const data = await res.json();
-
-            if (res.ok) {
+            const data = res.data;
+            console.log(res.status, ' : Res Status')
+            if (res.status === 201) {
                 toast.success("Signup successful! You can now log in.")
                 console.log('--------data---------\n', data)
-                // Optionally, redirect to login
                 router.push('/login')
-
-            } else {
-                console.log('-----errorMessage---------\n', data.errorMessage)
-                // Display backend validation errors inline
-                if (data.errorMessage) {
-
-                    setErrors(data.errorMessage);
-                } else {
-                    alert(data.message || "Signup failed");
-                }
             }
         } catch (error) {
-            console.log("Error:", error);
-            alert("Something went wrong. Check console for details.");
+            // console.log("Error:", error);
+            // console.log("AxiosError:", error);
+            if (error.response && error.response.data && error.response.data.errorMessage) {
+                setErrors(error.response.data.errorMessage);
+                console.log('-------ErrorMessage---------\n', error.response.data.errorMessage)
+            }
         } finally {
             setLoading(false);
         }
     };
-
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-50 via-white to-blue-50 dark:from-black dark:via-gray-900 dark:to-black font-sans">
+        <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 via-white to-blue-50 dark:from-black dark:via-gray-900 dark:to-black font-sans">
             <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-10 sm:p-16 w-full max-w-md flex flex-col items-center">
                 {/* Logo */}
                 <h1 className="text-4xl font-bold text-green-600 dark:text-green-400 mb-6">
@@ -91,7 +76,7 @@ export default function SignupForm() {
 
                     <select
                         className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-700 dark:text-white"
-
+                        required
                         name="role"
                         value={formData.role}
                         onChange={e => setFormData({ ...formData, role: e.target.value })}
@@ -101,7 +86,7 @@ export default function SignupForm() {
                         <option value="VENDOR">Vendor</option>
                         <option value="ADMIN">Admin</option>
                     </select>
-
+                    {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
 
                     {/* First Name */}
                     <input

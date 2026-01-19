@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function SocialAppLanding() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-pink-50 via-white to-purple-50 dark:from-black dark:via-gray-900 dark:to-black font-sans">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-linear-to-b from-pink-50 via-white to-purple-50 dark:from-black dark:via-gray-900 dark:to-black font-sans">
       <main className="flex flex-col items-center justify-center text-center px-6 py-32 sm:px-16">
         {/* App Logo */}
         <Image
