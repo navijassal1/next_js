@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:5000',
-    timeout: 1000,
+    timeout: 2000,
 })
 axiosInstance.interceptors.request.use((config) => {
     const accessToken = cookies.get('access_token')
@@ -25,6 +25,7 @@ axiosInstance.interceptors.response.use((response) => { return response },
             console.error("Response error :: ", error.response);
 
             cookies.remove('access_token')
+            cookies.remove('refresh_token')
 
             window.location.href='/login'
 

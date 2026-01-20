@@ -1,54 +1,56 @@
-"use client"
+"use client";
 
-import { useContext, useEffect, useState } from "react";
 import { userContext } from "@/context/user-context";
-import { axiosInstance } from "@/utils/axiosInstance";
-import Header from "../components/Header.component";
-import Sidebar from "../components/Sidebar.component";
-import UserDashboard from "../components/userDashboard.component";
-import Footer from "../components/footer.component";
+import Link from "next/link";
+import { useContext, useEffect } from "react";
+
 
 export default function Dashboard() {
-    const { user, setUser } = useContext(userContext);
-    const [loading, setLoading] = useState(true);
-
-    const fetchUserDetails = async () => {
-        try {
-            const res = await axiosInstance.get("/api/users/user-role");
-            if (res.status === 200) {
-                setUser(res.data.data);
-            }
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchUserDetails();
-    }, []);
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <p className="text-gray-500 text-lg">Loading profile...</p>
-            </div>
-        );
-    }
-
+    const {  handleListUsers ,listUsers} = useContext(userContext)
+    useEffect(()=>{
+        handleListUsers()
+    },[])
     return (
-        <div className="flex flex-col h-screen w-screen bg-amber-500">
-            <Header />
-            {/* Use flex-grow and flex container for sidebar + main */}
-            <div className="flex grow min-h-0">
+        <div className="flex flex-col min-h-screen bg-linear-to-br bg-slate-900 p-8">
+            {/* Header */}
+            <header className="mb-8">
+                <h1 className="text-4xl font-bold text-white mb-2">
+                    Welcome Back!
+                </h1>
+                <p className="text-white text-lg">
+                    Here's an overview of your dashboard.
+                </p>
+            </header>
 
-                {!user.roles.includes("USER") && <Sidebar />}
-                {user.roles.includes("USER") && <UserDashboard />}
-
+            {/* Cards / Overview Section */}
+            <div className="grid grid-cols-1 gap-6 mb-8">
+                {/* Users Card */}
+                <div className="bg-slate-800 shadow-md rounded-xl p-6 hover:shadow-xl transition-shadow">
+                    <h2 className="text-lg font-semibold text-white mb-2">Total Users</h2>
+                    <p className="text-3xl font-bold text-indigo-500">{listUsers.length}</p>
+                    <p className="text-sm text-indigo-400 mt-1">Users in the system</p>
+                </div>
+               
             </div>
 
-            <Footer />
+            {/* Welcome Illustration / Call-to-Action */}
+        
+                <div className="flex flex-col md:flex-row items-center justify-between bg-indigo-50 rounded-xl p-6 shadow-md">
+                    <div className="mb-4 md:mb-0">
+                        <h2 className="text-2xl font-semibold text-indigo-700 mb-2">
+                            Ready to manage your users?
+                        </h2>
+                        <p className="text-indigo-500 mb-4">
+                            You can add new users, manage roles, and assign permissions with ease.
+                        </p>
+                        <Link
+                        href={'/dashboard/users/list-users'} className="px-6 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition">
+                            Go to Users
+                        </Link>
+                    </div>
+                    
+                </div>
+            
         </div>
     );
 }

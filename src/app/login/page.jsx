@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 import cookies from "js-cookie"
 import { axiosInstance } from "@/utils/axiosInstance"
+import { userContext } from "@/context/user-context";
 
 export default function LoginForm() {
-
+	const { user, setUser ,fetchUserDetails} = useContext(userContext);
 	const router = useRouter()
 	const [loading, setLoading] = useState(false)
 	const [errors, setErrors] = useState({})
@@ -60,8 +61,12 @@ export default function LoginForm() {
 				cookies.set('access_token', data.data.accessToken, { expires: 1 })
 				cookies.set('refresh_token', data.data.refreshToken, { expires: 20 })
 				toast.success('Login Successfull')
-
-				router.push('/dashboard')
+				if(!data.data.roles.includes('USER')){
+					router.push('/dashboard')
+				}
+				else{
+					router.push('/userdashboard')
+				}
 			}
 		} catch (error) {
 			// console.log("Error:", error);

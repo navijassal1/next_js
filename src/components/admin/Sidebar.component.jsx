@@ -4,32 +4,29 @@ import { userContext } from "@/context/user-context";
 import { useContext, useState } from "react";
 import { HiChevronDown, HiChevronRight } from "react-icons/hi";
 import { HiOutlineUser, HiOutlineCog, HiOutlineCollection } from "react-icons/hi";
-import ListUsers from "./listUsers.component";
+import ListUsers from "../../app/dashboard/users/list-users/page";
+import ListUsersBaseOnRoles from "./listRoles.component";
+import Link from "next/link";
 
 export default function Sidebar() {
-    const { user,
-        listUsers,
-        handleListUsers,
-        can,
-        canHaveResoure,
-        sectionClasses,
+    const {
         buttonClasses,
-        iconClasses
+        can,
+        canHaveResource,
+        handleListUsers,
+        iconClasses,
+        listUsers,
+        listRoles,
+        sectionClasses,
     } = useContext(userContext);
     const [openSections, setOpenSections] = useState({
         SYSTEM: false,
         USER: false,
         CATEGORY: false,
     });
-    console.log(user, 'user in sidebar')
-    console.log(listUsers, 'listUsers')
     const toggleSection = (section) => {
         setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
     };
-
-
-
-
 
     //   return (
     //     // Sidebar container fixed width + full height (screen height)
@@ -153,19 +150,19 @@ export default function Sidebar() {
     //   );
 
     return (
-        <div className="h-full w-full bg-amber-200 flex">
+        <div className="h-full bg-amber-200 flex">
             <aside className="flex flex-col bg-slate-50 dark:bg-slate-900 h-full w-90 p-6 top-0 border-amber-100">
 
 
-                {/* Sections */}
-                {canHaveResoure("SYSTEM")
+                {/* Sections
+                {canHaveResource("SYSTEM")
                     && (
-                        <button className={sectionClasses} onClick={handleListUsers}>List Admins</button>
+                        <button className={sectionClasses} onClick={HandleListRoles}>List Admins</button>
                     )
-                }
+                } */}
 
                 <nav className="flex flex-col grow overflow-auto border-amber-50">
-                    {can("SYSTEM", "READ") && (
+                    {/* {can("SYSTEM", "READ") && (
                         <div className={sectionClasses}>
                             <div
                                 className="flex justify-between items-center cursor-pointer mb-2"
@@ -200,7 +197,7 @@ export default function Sidebar() {
                                 </div>
                             )}
                         </div>
-                    )}
+                    )} */}
 
                     {/* {can('SYSTEM', 'READ')
                             && (<button className={sectionClasses} onClick={handleListUsers}>List Users</button>)
@@ -221,82 +218,14 @@ export default function Sidebar() {
                         )}
                     </div> */}
 
-                    {canHaveResoure("USER")
+                    {canHaveResource("USER")
                         && (
-                            <button className={sectionClasses} onClick={handleListUsers}>List Users</button>
-                            // <div className={sectionClasses}>
-                            //     <div
-                            //         className="flex justify-between items-center cursor-pointer mb-2"
-                            //         onClick={() => toggleSection("USER")}
-                            //     >
-                            //         <div className="flex items-center gap-2">
-                            //             <HiOutlineUser className={iconClasses} />
-                            //             <h3 className="text-black dark:text-white font-semibold text-lg">
-                            //                 Users
-                            //             </h3>
-                            //         </div>
-                            //         {openSections.USER ? (
-                            //             <HiChevronDown className={iconClasses} />
-                            //         ) : (
-                            //             <HiChevronRight className={iconClasses} />
-                            //         )}
-                            //     </div>
-                            //     {openSections.USER && (
-                            //         <div className="flex flex-wrap gap-2 mt-2">
-                            //             {can("USER", "READ") && (
-                            //                 <button className={`${buttonClasses} bg-green-500`}>List Users</button>
-                            //             )}
-                            //             {can("USER", "CREATE") && (
-                            //                 <button className={`${buttonClasses} bg-yellow-500`}>Create Users</button>
-                            //             )}
-                            //             {can("USER", "UPDATE") && (
-                            //                 <button className={`${buttonClasses} bg-blue-500`}>Update Users</button>
-                            //             )}
-                            //             {can("USER", "DELETE") && (
-                            //                 <button className={`${buttonClasses} bg-red-500`}>Delete Users</button>
-                            //             )}
-                            //         </div>
-                            //     )}
-                            // </div>
+                            <Link className={sectionClasses} onClick={handleListUsers} href={'/dashboard/users/list-users'} >List Users</Link>
                         )
                     }
-                    {canHaveResoure("CATEGORY")
+                    {canHaveResource("SYSTEM")
                         && (
-                            <button className={sectionClasses} onClick={handleListUsers}>List Categories</button>
-                            // <div className={sectionClasses}>
-                            //     <div
-                            //         className="flex justify-between items-center cursor-pointer mb-2"
-                            //         onClick={() => toggleSection("USER")}
-                            //     >
-                            //         <div className="flex items-center gap-2">
-                            //             <HiOutlineUser className={iconClasses} />
-                            //             <h3 className="text-black dark:text-white font-semibold text-lg">
-                            //                 Users
-                            //             </h3>
-                            //         </div>
-                            //         {openSections.USER ? (
-                            //             <HiChevronDown className={iconClasses} />
-                            //         ) : (
-                            //             <HiChevronRight className={iconClasses} />
-                            //         )}
-                            //     </div>
-                            //     {openSections.USER && (
-                            //         <div className="flex flex-wrap gap-2 mt-2">
-                            //             {can("USER", "READ") && (
-                            //                 <button className={`${buttonClasses} bg-green-500`}>List Users</button>
-                            //             )}
-                            //             {can("USER", "CREATE") && (
-                            //                 <button className={`${buttonClasses} bg-yellow-500`}>Create Users</button>
-                            //             )}
-                            //             {can("USER", "UPDATE") && (
-                            //                 <button className={`${buttonClasses} bg-blue-500`}>Update Users</button>
-                            //             )}
-                            //             {can("USER", "DELETE") && (
-                            //                 <button className={`${buttonClasses} bg-red-500`}>Delete Users</button>
-                            //             )}
-                            //         </div>
-                            //     )}
-                            // </div>
+                            <button className={sectionClasses} >User Permissions</button>
                         )
                     }
                     {can("USER", "CREATE") && (
@@ -306,16 +235,16 @@ export default function Sidebar() {
                     )}
                 </nav>
             </aside>
-            <div className="w-full h-full bg-slate-100 dark:bg-slate-900 p-6">
-                {listUsers.length > 0
+            {/* <div className="w-full h-full bg-slate-100 dark:bg-slate-900 p-6">
+                {listUsers
                     &&
                     <ListUsers />
-
                 }
-
-            </div>
-
-
+                {listRoles.length > 0
+                    &&
+                    <ListUsersBaseOnRoles />
+                }
+            </div> */}
         </div>
     )
 }

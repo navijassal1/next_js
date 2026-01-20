@@ -1,8 +1,42 @@
-import { useContext } from "react";
+"use client"
+
+import { useContext, useEffect, useState } from "react";
 import { userContext } from "@/context/user-context";
+import { useRouter } from "next/navigation";
+import { axiosInstance } from "@/utils/axiosInstance";
 
 export default function UserDashboard() {
-  const { user } = useContext(userContext);
+  const { user,setUser } = useContext(userContext);
+
+   const router = useRouter()
+    const [loading, setLoading] = useState(true);
+
+    const fetchUserDetails = async () => {
+        try {
+            const res = await axiosInstance.get("/api/users/user-role"); //fetch user details
+            console.log(res.data.data)
+            if (res.status === 200) {
+                setUser(res.data.data);
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserDetails();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <p className="text-gray-500 text-lg">Loading profile...</p>
+            </div>
+        );
+    }
 
   return (
     <div className="min-h-screen min-w-screen bg-slate-50 dark:bg-slate-900">

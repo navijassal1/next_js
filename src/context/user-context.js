@@ -1,17 +1,32 @@
-import { createContext, useState } from "react"
+import { createContext, useCallback, useState } from "react"
 import cookies from "js-cookie"
 import { axiosInstance } from "@/utils/axiosInstance"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
 
-export const userContext = createContext(null)
+ const userContext = createContext(null)
 
-export function UserProvider({ children }) {
+ function UserProvider({ children }) {
   const router = useRouter()
 
   const [user, setUser] = useState([])
   const [listUsers, setListUsers] = useState([])
+
+  const [listRoles, setListRoles] = useState([])
+
+   const fetchUserDetails = async () => {
+        try {
+            const res = await axiosInstance.get("/api/users/user-role"); //fetch user details
+            console.log(res.data.data)
+            if (res.status === 200) {
+                setUser(res.data.data);
+            }
+
+        } catch (error) {
+            console.error(error);
+        } 
+    };
 
   const handleLogout = async () => {
     let deviceId = localStorage.getItem("device_id");
@@ -31,7 +46,7 @@ export function UserProvider({ children }) {
 
     }
   }
-  const handleListUsers = async () => {
+  const handleListUsers = useCallback(async () => {
     try {
       const res = await axiosInstance.get('/api/admin/list-users')
 
@@ -47,32 +62,76 @@ export function UserProvider({ children }) {
       }
     } catch (error) {
       console.error(error)
+    }
+  },[])
+  const fetchUsersWithRoles = async (role) => {
+    try {
+      console.log(role,'role in handleRoleWithUsers')
+      const res = await axiosInstance.get(`/api/admin/users/${role}`)
+
+      // console.log(res.data)
+      if (res.status === 200) {
+        // console.log(res.data.data)
+
+        setListUsers(res.data.data)
+
+        return true
+      } else {
+        console.log('fetching list users Failed')
+        return false
+      }
+    } catch (error) {
+      console.error(error)
+
+    }
+  }
+  const HandleListRoles = async () => {
+    try {
+      const res = await axiosInstance.get(`/api/admin/list-roles/`)
+
+      // console.log(res.data)
+      if (res.status === 200) {
+        // console.log(res.data.data)
+
+        setListRoles(res.data.data)
+
+        return true
+      } else {
+        console.log('fetching list users Failed')
+        return false
+      }
+    } catch (error) {
+      console.error(error)
 
     }
   }
   const can = (resource, action) =>
     user?.permissions?.some((p) => p.resource === resource && p.action === action);
-  const canHaveResoure = (resource) =>
+  const canHaveResource = (resource) =>
     user?.permissions?.some((p) => p.resource === resource)
 
   const sectionClasses =
-    "bg-white dark:bg-slate-800 rounded-xl shadow p-4 mb-4 w-full max-w-xs hover:shadow-lg transition-shadow";
+    "flex justify-center bg-white dark:bg-slate-800 rounded-xl shadow p-4 mb-4 w-full max-w-xs hover:text-white shadow-lg transition-shadow ";
 
   const buttonClasses =
     "px-4 py-2 rounded text-white text-sm font-medium transition-colors hover:scale-105";
 
   const iconClasses = "w-5 h-5 text-slate-600 dark:text-slate-300";
   const provide = {
-    can,
-    canHaveResoure,
-    user,
-    setUser,
-    handleLogout,
-    listUsers,
-    handleListUsers,
-    sectionClasses,
     buttonClasses,
-    iconClasses
+    can,
+    canHaveResource,
+    handleListUsers,
+    handleLogout,
+    fetchUsersWithRoles,
+    fetchUserDetails,
+    HandleListRoles,
+    iconClasses,
+    listUsers,
+    listRoles,
+    setUser,
+    sectionClasses,
+    user,
   }
   return (
     <userContext.Provider value={provide}>
@@ -81,3 +140,4 @@ export function UserProvider({ children }) {
   );
 }
 
+export {userContext,UserProvider}

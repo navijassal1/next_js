@@ -2,7 +2,7 @@ import { userContext } from "@/context/user-context";
 import { useContext } from "react";
 
 export default function Header() {
-  const { user, handleLogout } = useContext(userContext);
+  const { handleLogout, user } = useContext(userContext);
 
   return (
     <header className="w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
@@ -24,8 +24,8 @@ export default function Header() {
           </div>
           {/* username */}
           <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">
-              {user.first_name} {user.last_name}
-            </span>
+            {user.first_name} {user.last_name}
+          </span>
 
           {/* Logout */}
           <button

@@ -1,11 +1,15 @@
 "use client"
 
 import { userContext } from "@/context/user-context";
-import { useContext } from "react";
+import Link from "next/link";
+import { useContext, useEffect } from "react";
 
 export default function ListUsers() {
-    const { listUsers, buttonClasses, can } = useContext(userContext);
-    // console.log(listUsers, 'in list users')
+    const { listUsers, handleListUsers, fetchUsersWithRoles, can, canHaveResource } = useContext(userContext);
+    useEffect(() => {
+        handleListUsers()
+    }, [])
+    console.log(listUsers, 'listUsers ')
     return (
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden">
 
@@ -22,21 +26,20 @@ export default function ListUsers() {
 
                     <select
                         className="w-full md:w-48 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-slate-700 dark:text-white"
+                        
+                        onChange={
+                            (e) =>
+                                e.target.value === "ALL" ? handleListUsers() :
+                                    fetchUsersWithRoles(e.target.value)
+                        }
                     >
-                        <option value="">All Roles</option>
+                        <option value="ALL" >All Roles</option>
+                        <option value="SUPER_ADMIN">Super Admin</option>
                         <option value="ADMIN">Admins</option>
-                        <option value="USER">Users</option>
+                        <option value="USER" >Users</option>
                         <option value="VENDOR">Vendors</option>
                     </select>
                 </div>
-
-                {/* Right: Create User Button */}
-
-                {can("USER", "CREATE") && (
-                    <button className={`${buttonClasses} bg-indigo-600 hover:bg-indigo-700`}>
-                        + Create User
-                    </button>
-                )}
             </div>
 
             {/* Table */}
@@ -51,6 +54,13 @@ export default function ListUsers() {
                             <th className="px-6 py-3">Email</th>
                             <th className="px-6 py-3">Role</th>
                             <th className="px-6 py-3 text-center">Actions</th>
+                            
+                            {canHaveResource("SYSTEM") && (
+                                <th className="px-6 py-3 text-center">
+                                    permissions
+                                </th>
+                            )}
+
                         </tr>
                     </thead>
 
@@ -109,12 +119,20 @@ export default function ListUsers() {
 
                                     </div>
                                 </td>
+                                {canHaveResource("SYSTEM") && (
+                                    <td className="px-6 py-3 text-center">
+                                        <Link 
+                                         className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-white transition"
+                                         href={`/dashboard/users/${user.id}/permissions`}>  
+                                        permissions
+                                        </Link>
+                                    </td>
+                                )}  
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
-
         </div>
     )
 }
