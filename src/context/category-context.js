@@ -31,7 +31,7 @@ function CategoryProvider({ children }) {
     }
     const fetchUsersWithcategories = async (role) => {
         try {
-            console.log(role, 'role in handleRoleWithUsers')
+            // console.log(role, 'role in handleRoleWithUsers')
             const res = await axiosInstance.get(`/api/admin/users/vendor`)
 
             // console.log(res.data)

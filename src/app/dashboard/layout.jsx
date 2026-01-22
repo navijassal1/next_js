@@ -1,34 +1,16 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { userContext } from "@/context/user-context";
 import Header from "@/components/common/Header.component";
 import Sidebar from "@/components/admin/Sidebar.component";
-import Footer from "@/components/common/footer.component";
-import { useRouter } from "next/navigation";
-import { axiosInstance } from "@/utils/axiosInstance";
+import { ROLES } from "@/enums/enums";
+import { adminContext } from "@/context/admin-context";
 
 export default function DashboardLayout({ children }) {
 
-  const { user, setUser } = useContext(userContext);
-  const router = useRouter()
-    const [loading, setLoading] = useState(true);
-
-    const fetchUserDetails = async () => {
-        try {
-            const res = await axiosInstance.get("/api/users/user-role"); //fetch user details
-            console.log(res.data.data)
-            if (res.status === 200) {
-                setUser(res.data.data);
-            }
-
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
+  const { user,loading,fetchUserDetails } = useContext(userContext);
+ 
     useEffect(() => {
         fetchUserDetails();
     }, []);
@@ -40,12 +22,12 @@ export default function DashboardLayout({ children }) {
             </div>
         );
     }
-    // console.log(user,'user in admin layout')
+  //   console.log(user,'user in admin layout')
   // 🔒 Admin-only layout guard
-  if (!user?.roles?.some((r) => ["ADMIN", "SUPER_ADMIN","VENDOR"].includes(r))) {
+  if (!user?.roles?.some((r) => [ROLES.SUPER_ADMIN, ROLES.ADMIN,ROLES.VENDOR].includes(r))) {
     return <p>Access denied</p>;
   }
-
+{}
   return (
     <div className="flex flex-col h-screen w-screen">
       <Header />
@@ -57,8 +39,6 @@ export default function DashboardLayout({ children }) {
           {children}
         </main>
       </div>
-
-      <Footer />
     </div>
   );
 }

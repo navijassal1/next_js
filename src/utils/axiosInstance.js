@@ -1,11 +1,9 @@
 import axios from "axios"
 import cookies from 'js-cookie'
-import { useRouter } from "next/navigation"
-
 
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:5000',
-    timeout: 2000,
+    timeout: 1000,
 })
 axiosInstance.interceptors.request.use((config) => {
     const accessToken = cookies.get('access_token')
@@ -27,7 +25,7 @@ axiosInstance.interceptors.response.use((response) => { return response },
             cookies.remove('access_token')
             cookies.remove('refresh_token')
 
-            window.location.href='/login'
+            // window.location.href='/login'
 
             // try {
             //     const refreshTokenUrl = 'http://localhost:5000auth/refresh-token'

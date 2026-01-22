@@ -5,7 +5,7 @@ export default function Header() {
   const { handleLogout, user } = useContext(userContext);
 
   return (
-    <header className="w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+    <header className="w-screen bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
         {/* Logo */}

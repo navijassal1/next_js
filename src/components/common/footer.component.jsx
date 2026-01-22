@@ -5,12 +5,12 @@ export default function Footer() {
   const { user } = useContext(userContext);
 
   return (
-    <footer className="w-full bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+    <footer className="w-screen bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-2">
 
         {/* Branding */}
         <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-          &copy; {new Date().getFullYear()} InstaClone
+          &copy;    {new Date().getDate()}-{new Date().getMonth()+1}-{new Date().getFullYear()} InstaClone
         </span>
 
         {/* Optional User Info */}

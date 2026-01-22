@@ -40,7 +40,7 @@ export default function SignupForm() {
             console.log(res.status, ' : Res Status')
             if (res.status === 201) {
                 toast.success("Signup successful! You can now log in.")
-                console.log('--------data---------\n', data)
+                // console.log('--------data---------\n', data)
                 router.push('/login')
             }
         } catch (error) {
