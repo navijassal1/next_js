@@ -27,11 +27,11 @@ export default function Dashboard() {
             {/* Cards / Overview Section */}
             <div className="grid grid-cols-1 gap-6 mb-8">
                 {/* Users Card */}
-                {/* <div className="bg-slate-800 shadow-md rounded-xl p-6 hover:shadow-xl transition-shadow">
+                <div className="bg-slate-800 shadow-md rounded-xl p-6 hover:shadow-xl transition-shadow">
                     <h2 className="text-lg font-semibold text-white mb-2">Total Users</h2>
                     <p className="text-3xl font-bold text-indigo-500">{listUsers.data_details.total_data}</p>
                     <p className="text-sm text-indigo-400 mt-1">Users in the system</p>
-                </div> */}
+                </div>
 
             </div>
 

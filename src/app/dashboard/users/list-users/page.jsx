@@ -1,78 +1,105 @@
-"use client"
+"use client";
 
 import { userContext } from "@/context/user-context";
 import { adminContext } from "@/context/admin-context";
-import Link from "next/link";
 import { Suspense, useContext, useEffect, useState } from "react";
-import { ROLES, CAN_ACTION, CAN_RESOURCE } from "@/enums/enums"
 import DataTable from "@/components/common/dataTable.component";
 
 export default function ListUsers() {
-    const [roleValue, setRoleValue] = useState('ALL')
-    const { can } = useContext(userContext);
-    const {
-        listUsers,
-        listRoles,
-        handleListRoles,
-        fetchListUsersViaRole,
-        loading
+  const {
+    listUsers,
+    listRoles,
+    handleListRoles,
+    fetchListUsersViaRole,
+    loading,
+  } = useContext(adminContext);
 
-    } = useContext(adminContext);
+  const { can } = useContext(userContext);
 
-    useEffect(() => {
-        fetchListUsersViaRole()
-        handleListRoles()
-    }, [])
-    // console.log(listUsers, 'listUsers ')
-    return (
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden">
+  const [roleValue, setRoleValue] = useState("ALL");
 
-            {/* Header / Toolbar */}
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+  // ✅ SINGLE source of truth
+  const [sortConfig, setSortConfig] = useState({
+    column: "id",
+    order: "asc",
+    page: 1,
+    limit: 10,
+  });
 
-                {/* Left: Search + Filter */}
-                <div className="flex flex-col md:flex-row gap-3 w-full">
-                    <input
-                        type="search"
-                        placeholder="Search users..."
-                        className="w-full md:w-72 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-slate-700 dark:text-white"
-                    />
+  const columns = ["ID", "FIRST_NAME", "LAST_NAME", "USERNAME", "EMAIL", "ROLE"];
 
-                    <select
-                        className="w-full md:w-48 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-slate-700 dark:text-white"
+  useEffect(() => {
+    handleListRoles();
+    fetchUsers();
+  }, []);
 
-                        onChange={(e) => {
-                            const role = e.target.value
-                            setRoleValue(role)
+  const fetchUsers = (config = sortConfig, role = roleValue) => {
+    fetchListUsersViaRole(
+      role,
+      config.page,
+      config.column,
+      config.order,
+      config.limit
+    );
+  };
 
+  // ✅ ONE handler for sort / pagination / limit
+  const handleTableChange = (changes) => {
+    const newConfig = { ...sortConfig, ...changes };
+    setSortConfig(newConfig);
+    fetchUsers(newConfig);
+  };
 
-                            console.log(roleValue, 'in else', role)
-                            fetchListUsersViaRole(role, 1)
+  return (
+    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden">
 
-                        }}
-                    >
-                        <option value="ALL">All Roles</option>
-                        {listRoles.map(r => <option key={r.id} value={`${r.name}`} >{r.name}</option>)}
+      {/* ================= TOOLBAR ================= */}
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between p-4 border-b">
 
-                    </select>
-                </div>
-            </div>
+        {/* Search (optional later) */}
+        <input
+          type="search"
+          placeholder="Search users..."
+          className="w-full md:w-72 px-4 py-2 rounded-lg border dark:bg-slate-700"
+        />
 
-            {/* Table */}
-            <div className="overflow-x-auto">
-                <Suspense fallback={loading}> 
+        {/* Role filter */}
+        <select
+          className="w-full md:w-48 px-4 py-2 rounded-lg border dark:bg-slate-700"
+          value={roleValue}
+          onChange={(e) => {
+            const role = e.target.value;
+            setRoleValue(role);
 
-                <DataTable {...{
-                    can,
-                    listUsers,
-                    listRoles,
-                    handleListRoles,
-                    fetchListUsersViaRole,
-                    roleValue,
-                    setRoleValue
-                    }} />
-                    </Suspense>
-            </div>
-        </div>
-    )
+            const resetConfig = { ...sortConfig, page: 1 };
+            setSortConfig(resetConfig);
+
+            fetchUsers(resetConfig, role);
+          }}
+        >
+          <option value="ALL">All Roles</option>
+          {listRoles.map((r) => (
+            <option key={r.id} value={r.name}>
+              {r.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* ================= TABLE ================= */}
+      <div className="overflow-x-auto">
+        <Suspense fallback={loading}>
+          <DataTable
+            can={can}
+            roleValue={roleValue}
+            columns={columns}
+            data={listUsers.users || []}
+            meta={listUsers.data_details}
+            sortConfig={sortConfig}
+            onChange={handleTableChange}
+          />
+        </Suspense>
+      </div>
+    </div>
+  );
 }

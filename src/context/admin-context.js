@@ -82,14 +82,17 @@ function AdminProvider({ children }) {
             setLoading(false)
         }
     }
-    const fetchListUsersViaRole = async (role, pageNumber, sort_by, sort_order) => {
+    const fetchListUsersViaRole = async (role, pageNumber, sort_by, sort_order,limit) => {
         try {
-            console.log(role, 'role in handleRoleWithUsers')
-            if (!pageNumber || !role || !sort_by || !sort_order) {
+            if (!pageNumber || !role || !sort_by || !sort_order || !limit ) {
                 pageNumber = 1
                 role = "ALL"
+                sort_by = "id"
+                sort_order = 'asc'
+                limit=5
             }
-            const res = await axiosInstance.get(`/api/admin/users/${role}?page=${pageNumber}&sort_by=id&sort_order=asc`)
+            console.log({ role, pageNumber, sort_by, sort_order ,limit}, 'role in handleRoleWithUsers')
+            const res = await axiosInstance.get(`/api/admin/users/${role}?page=${pageNumber}&sort_by=${sort_by.toLowerCase()}&sort_order=${sort_order}&limit=${limit}`)
 
             // console.log(res.data)
             if (res.status === 200) {

@@ -2,7 +2,7 @@
 const ROLES = {
     SUPER_ADMIN: "SUPER_ADMIN",
     ADMIN: "ADMIN",
-    VENDOR:"VENDOR",
+    VENDOR: "VENDOR",
     USER: "USER"
 }
 const CAN_RESOURCE = {
@@ -16,4 +16,8 @@ const CAN_ACTION = {
     UPDATE: "UPDATE",
     DELETE: "DELETE"
 }
-export {ROLES,CAN_RESOURCE,CAN_ACTION}
+const SORT_ORDER = {
+    ASC: "asc",
+    DESC: "desc",
+}
+export { ROLES, CAN_RESOURCE, CAN_ACTION, SORT_ORDER }

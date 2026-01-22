@@ -16,7 +16,7 @@ export default function Sidebar() {
         fetchListUsersViaRole,
     } = useContext(adminContext);
     return (
-        <div className="h-full bg-amber-200 flex">
+        <div className="h-full w-50 bg-amber-200 flex">
             <aside className="flex flex-col bg-slate-50 dark:bg-slate-900 h-full w-90 p-6 top-0 border-amber-100">
                 <nav className="flex flex-col grow overflow-auto border-amber-50">
                     {can(CAN_RESOURCE.USER, CAN_ACTION.READ)

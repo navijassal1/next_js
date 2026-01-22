@@ -9,25 +9,30 @@ import { adminContext } from "@/context/admin-context";
 
 export default function DashboardLayout({ children }) {
 
-  const { user,loading,fetchUserDetails } = useContext(userContext);
- 
-    useEffect(() => {
-        fetchUserDetails();
-    }, []);
+  const { user, loading, fetchUserDetails } = useContext(userContext);
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <p className="text-gray-500 text-lg">Loading profile...</p>
-            </div>
-        );
-    }
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-gray-500 text-lg">Loading profile...</p>
+        </div>
+      </>
+    );
+  }
   //   console.log(user,'user in admin layout')
   // 🔒 Admin-only layout guard
-  if (!user?.roles?.some((r) => [ROLES.SUPER_ADMIN, ROLES.ADMIN,ROLES.VENDOR].includes(r))) {
-    return <p>Access denied</p>;
+  if (!user?.roles?.some((r) => [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.VENDOR].includes(r))) {
+    return  <div className="flex items-center justify-center h-screen">
+          <p className="text-gray-500 text-lg">Access denied</p>
+        </div>;
   }
-{}
+  { }
   return (
     <div className="flex flex-col h-screen w-screen">
       <Header />
