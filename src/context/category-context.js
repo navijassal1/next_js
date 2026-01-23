@@ -1,6 +1,6 @@
 import { axiosInstance } from "@/utils/axiosInstance"
 import { useRouter } from "next/navigation"
-import { createContext, useState } from "react"
+import { createContext, useContext, useState } from "react"
 
 const categoryContext = createContext(null)
 
@@ -62,4 +62,11 @@ function CategoryProvider({ children }) {
     )
 }
 
-export { categoryContext, CategoryProvider }
+function useCategoryContext() {
+    const context = useContext(categoryContext)
+
+    if (!context) throw new Error("useCategoryContext must be used within AdminProvider");
+
+    return context
+}
+export { useCategoryContext, CategoryProvider }

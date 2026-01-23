@@ -1,8 +1,7 @@
-import { userContext } from "@/context/user-context";
-import { useContext } from "react";
+import { useUserContext } from "@/context/user-context";
 
 export default function Header() {
-  const { handleLogout, user } = useContext(userContext);
+  const { handleLogout, user } = useUserContext();
 
   return (
     <header className="w-screen bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">

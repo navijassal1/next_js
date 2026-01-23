@@ -1,11 +1,10 @@
 "use client"
 
-import { useContext  } from "react";
-import { userContext } from "@/context/user-context";
+import { useUserContext } from "@/context/user-context";
 
 
 export default function UserDashboard() {
-  const { user } = useContext(userContext);
+  const { user } = useUserContext();
 
   return (
     <div className="min-h-screen min-w-screen bg-slate-50 dark:bg-slate-900">

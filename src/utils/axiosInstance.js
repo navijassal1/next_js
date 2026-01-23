@@ -25,7 +25,7 @@ axiosInstance.interceptors.response.use((response) => { return response },
             cookies.remove('access_token')
             cookies.remove('refresh_token')
 
-            // window.location.href='/login'
+            window.location.href='/login'
 
             // try {
             //     const refreshTokenUrl = 'http://localhost:5000auth/refresh-token'

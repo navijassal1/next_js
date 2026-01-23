@@ -1,4 +1,4 @@
-import { createContext, useCallback, useState } from "react"
+import { createContext, useCallback, useContext, useState } from "react"
 import cookies from "js-cookie"
 import { axiosInstance } from "@/utils/axiosInstance"
 import { toast } from "sonner"
@@ -84,6 +84,13 @@ function UserProvider({ children }) {
   );
 }
 
+function useUserContext() {
+  const context = useContext(userContext)
+
+  if (!context) throw new Error("useUserContext must be used within AdminProvider");
+
+  return context
+}
 
 
-export { userContext, UserProvider }
+export { useUserContext, UserProvider }

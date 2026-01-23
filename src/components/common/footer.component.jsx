@@ -1,8 +1,8 @@
-import { useContext } from "react";
-import { userContext } from "@/context/user-context";
+
+import { useUserContext } from "@/context/user-context";
 
 export default function Footer() {
-  const { user } = useContext(userContext);
+  const { user } = useUserContext();
 
   return (
     <footer className="w-screen bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">

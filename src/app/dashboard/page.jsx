@@ -2,11 +2,14 @@
 
 import { adminContext } from "@/context/admin-context";
 import Link from "next/link";
-import { useContext, useEffect } from "react";
+import { useEffect, useState } from "react";
+import {useAdminContext} from "@/context/admin-context"
 
 
 export default function Dashboard() {
-    const { fetchListUsersViaRole, listUsers } = useContext(adminContext)
+    const { fetchListUsersViaRole, listUsers } = useAdminContext()
+    const [loading,setLoading]=useState(false)
+
 
     useEffect(() => {
         fetchListUsersViaRole()
@@ -29,7 +32,7 @@ export default function Dashboard() {
                 {/* Users Card */}
                 <div className="bg-slate-800 shadow-md rounded-xl p-6 hover:shadow-xl transition-shadow">
                     <h2 className="text-lg font-semibold text-white mb-2">Total Users</h2>
-                    <p className="text-3xl font-bold text-indigo-500">{listUsers.data_details.total_data}</p>
+                    <p className="text-3xl font-bold text-indigo-500">{listUsers.data_details.total_records}</p>
                     <p className="text-sm text-indigo-400 mt-1">Users in the system</p>
                 </div>
 

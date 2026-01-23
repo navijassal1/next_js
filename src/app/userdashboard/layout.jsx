@@ -2,11 +2,11 @@
 
 import Header from "@/components/common/Header.component";
 import Footer from "@/components/common/footer.component";
-import { userContext } from "@/context/user-context";
-import { useContext, useEffect } from "react";
+import { useUserContext } from "@/context/user-context";
+import {  useEffect } from "react";
 
 export default function UserLayout({ children }) {
-  const { loading, fetchUserDetails } = useContext(userContext);
+  const { loading, fetchUserDetails } = useUserContext();
 
   useEffect(() => {
     fetchUserDetails();

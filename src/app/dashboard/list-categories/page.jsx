@@ -2,18 +2,15 @@
 
 import { useUserContext } from "@/context/user-context";
 import { useAdminContext } from "@/context/admin-context";
-import { useEffect, useRef, useState } from "react";
+import {  useRef, useState } from "react";
 import DataTable from "@/components/common/dataTable.component";
 
 export default function ListUsers() {
   const {
     listUsers,
     listRoles,
-    handleListRoles,
-    fetchListUsersViaRole,
-
   } = useAdminContext();
-  const [loading, setLoading] = useState(true)
+
   const { can } = useUserContext();
 
   // const [roleValue, setRoleValue] = useState("ALL");
@@ -29,78 +26,22 @@ export default function ListUsers() {
   });
 
   const columns = [
-    { key: "id", label: "ID" },
-    { key: "first_name", label: "FIRST NAME" },
-    { key: "last_name", label: "LAST NAME" },
-    { key: "username", label: "USERNAME" },
-    { key: "email", label: "EMAIL" },
-    { key: "role", label: "ROLE" },
-  ];
-
-  const actions = [
-    { label: 'view', funciton: '', path: '/dashboard/users/2/permissions' },
-    { label: 'edit', funciton: '', path: '/dashboard/users/2/permissions' },
-    { label: 'delete', funciton: '', path: '/dashboard/users/2/permissions' },
-    { label: 'permissions', function: '', path: '/dashboard/users/2/permissions' }
-  ]
-  useEffect(() => {
-    const loadListUsers = async () => {
-      setLoading(true);
-      try {
-        await Promise.all([
-          handleListRoles(),
-          fetchUsers()
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadListUsers();
-  }, []);
-
-  const fetchUsers = (config = sortConfig) => {
-
-    return fetchListUsersViaRole(
-      config.role,
-      config.page,
-      config.column,
-      config.order,
-      config.limit,
-      config.search
-    );
-  };
-
+        { key: "id", label: "ID" },
+        { key: "user_id", label: "USER ID" },
+        { key: "category_name", label: "CATEGORY NAME" }
+    ];
+const data=[
+    {id:1,user_id:2,category_name:'electronics'},
+    {id:1,user_id:2,category_name:'electronics'},
+    {id:1,user_id:2,category_name:'electronics'},
+    {id:1,user_id:2,category_name:'electronics'},
+    {id:1,user_id:2,category_name:'electronics'}
+]
   // ✅ ONE handler for sort / pagination / limit
   const handleTableChange = (changes) => {
     const newConfig = { ...sortConfig, ...changes };
     setSortConfig(newConfig);
-    fetchUsers(newConfig);
   };
-  if (loading) {
-    return (
-      <section className="p-6 space-y-6 animate-pulse">
-        {/* Table skeleton */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 space-y-4">
-          {[1, 2, 3].map((row) => (
-            <div key={row} className="flex gap-4">
-              <div className="h-4 w-6 bg-slate-200 dark:bg-slate-700 rounded"></div>
-              <div className="h-4 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
-              <div className="h-4 w-10 bg-slate-200 dark:bg-slate-700 rounded"></div>
-              <div className="h-4 w-10 bg-slate-200 dark:bg-slate-700 rounded"></div>
-              <div className="h-4 w-10 bg-slate-200 dark:bg-slate-700 rounded"></div>
-            </div>
-          ))}
-        </div>
-
-        {/* Center spinner */}
-        <div className="flex justify-center pt-4">
-          <div className="h-10 w-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      </section>
-    );
-  }
-
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden">
@@ -112,7 +53,7 @@ export default function ListUsers() {
         <input
           type="search"
           placeholder="Search users..."
-
+          
           onChange={(e) => {
             const value = e.target.value.trim();
 
@@ -149,14 +90,14 @@ export default function ListUsers() {
             </option>
           ))}
         </select>
-      </div>
+      </div>  
 
       {/* ================= TABLE ================= */}
       <div className="overflow-x-auto">
         <DataTable
           can={can}
           columns={columns}
-          data={listUsers.users || []}
+          data={data || []}
           meta={listUsers.data_details}
           sortConfig={sortConfig}
           onMetaChange={handleTableChange}

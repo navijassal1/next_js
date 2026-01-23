@@ -1,5 +1,5 @@
 import { axiosInstance } from "@/utils/axiosInstance"
-import { createContext, useCallback, useState } from "react"
+import { createContext, useContext, useState } from "react"
 import { toast } from "sonner"
 
 const adminContext = createContext(null)
@@ -15,13 +15,14 @@ function AdminProvider({ children }) {
             from: 0,
             to: 0,
             total_data: 0,
+            total_records:0,
         }
     },);
     const [listRoles, setListRoles] = useState([]);
     const [userPermissions, setUserPermissions] = useState([])
     const [loading, setLoading] = useState(true)
 
-    const handleListPermissions = useCallback(async () => {
+    const handleListPermissions = async () => {
         try {
             const res = await axiosInstance.get(`/api/admin/list-permissions`)
             // console.log(res.data,'in admin provider permissions lists')
@@ -37,32 +38,7 @@ function AdminProvider({ children }) {
         } catch (error) {
             console.error(error)
         }
-    }, [])
-    const handleListUsers = useCallback(async () => {
-        try {
-
-            // console.log(pageNumber, 'current page')
-            // if (!pageNumber ) {
-            //     pageNumber = 1
-            // }
-            const res = await axiosInstance.get(`/api/admin/list-users`)
-            // console.log(res.data)
-            if (res.status === 200) {
-                // console.log(res.data.data)
-                setListUsers(res.data.data)
-
-                return true
-            } else {
-                console.log('fetching list users Failed')
-                return false
-            }
-        } catch (error) {
-            console.error(error)
-        }
-        finally {
-            setLoading(false)
-        }
-    }, [])
+    }
     const handleListRoles = async () => {
         try {
             const res = await axiosInstance.get(`/api/admin/list-roles/`)
@@ -82,17 +58,25 @@ function AdminProvider({ children }) {
             setLoading(false)
         }
     }
-    const fetchListUsersViaRole = async (role, pageNumber, sort_by, sort_order,limit) => {
+    const fetchListUsersViaRole = async (
+        role,
+        page,
+        column,
+        order,
+        limit,
+        search) => {
         try {
-            if (!pageNumber || !role || !sort_by || !sort_order || !limit ) {
-                pageNumber = 1
-                role = "ALL"
-                sort_by = "id"
-                sort_order = 'asc'
-                limit=5
-            }
-            console.log({ role, pageNumber, sort_by, sort_order ,limit}, 'role in handleRoleWithUsers')
-            const res = await axiosInstance.get(`/api/admin/users/${role}?page=${pageNumber}&sort_by=${sort_by.toLowerCase()}&sort_order=${sort_order}&limit=${limit}`)
+            console.log('function called')
+            // console.log({ role, page, column, order, limit, search }, 'before role in handleRoleWithUsers')
+            page = page ?? 1;
+            role = role ?? "ALL";
+            column = column ?? "id";
+            order = order ?? 'asc';
+            limit = limit ?? 5;
+            search = search ?? '';
+
+            // console.log({ role, page, column, order, limit, search }, 'after role in handleRoleWithUsers')
+            const res = await axiosInstance.get(`/api/admin/users/${role}?search=${search}&page=${page}&sort_by=${column.toLowerCase()}&sort_order=${order}&limit=${limit}`)
 
             // console.log(res.data)
             if (res.status === 200) {
@@ -117,9 +101,11 @@ function AdminProvider({ children }) {
 
             // console.log(res.data)
             if (res.status === 200) {
-                // console.log(res.data.data)
+                console.log(res.data.data, 'response data')
 
-                setUserPermissions(res.data.data)
+                const permissions = res.data.data.map((p) => p.permission)
+                console.log(permissions, 'permissions permissions')
+                setUserPermissions(permissions)
 
                 return true
             } else {
@@ -134,7 +120,12 @@ function AdminProvider({ children }) {
     const updateUserPermissions = async (userId) => {
         try {
             // console.log(userId, 'userid in this')
-            const localPermissions = userPermissions.map(user => user.permission.id)
+            const localPermissions = userPermissions.map(permission => permission.id)
+            // console.log(localPermissions, 'localPermissions')
+            if (localPermissions.length === 0) {
+                toast.error("At least one permission must be selected")
+                return
+            }
             const res = await axiosInstance.put(`/api/admin/permissions`, {
                 user_id: userId,
                 permission_ids: localPermissions
@@ -154,18 +145,43 @@ function AdminProvider({ children }) {
         }
     }
     function toggleCheckboxValue(actionID) {
-
         setUserPermissions(prev => {
             // Check if permission is already selected
-            const exists = prev.find(p => p.permission.id === actionID);
+            const exists = prev.find(p => p.id === actionID);
             if (exists) {
                 // Remove it
-                return prev.filter(p => p.permission.id !== actionID);
+                return prev.filter(p => p.id !== actionID);
             }
             // Add it
             const permissionToAdd = listPermissions.find(p => p.id === actionID);
-            return permissionToAdd ? [...prev, { permission: permissionToAdd }] : prev;
+            return permissionToAdd ? [...prev, permissionToAdd] : prev;
         });
+    }
+    function SelectAllResourceValue(resource) {
+        console.log("--------Start Select All--------", resource)
+
+        const resourcePermissions = listPermissions.filter(
+            p => p.resource === resource
+        )
+
+        setUserPermissions(prev => {
+            // IDs already selected
+            const selectedIds = new Set(prev.map(p => p.id))
+
+            // Check if ALL permissions for this resource are already selected
+            const hasAll = resourcePermissions.every(p =>
+                selectedIds.has(p.id)
+            )
+
+            if (hasAll) {
+                return prev.filter(p => p.resource !== resource)
+            }
+            const missingPermissions = resourcePermissions.filter(
+                p => !selectedIds.has(p.id)
+            )
+            return [...prev, ...missingPermissions]
+        })
+        console.log("--------END Select All--------")
     }
 
     const provide = {
@@ -179,15 +195,16 @@ function AdminProvider({ children }) {
 
         setListPermissions,
         setUserPermissions,
+        SelectAllResourceValue,
 
         handleListRoles,
         handleListPermissions,
-        handleListUsers,
 
         fetchUsersWithPermissions,
         fetchListUsersViaRole,
 
         toggleCheckboxValue,
+
     }
     return (
         <adminContext.Provider value={provide}>
@@ -196,4 +213,12 @@ function AdminProvider({ children }) {
     )
 }
 
-export { adminContext, AdminProvider }
+function useAdminContext() {
+    const context = useContext(adminContext)
+
+    if (!context) throw new Error("useAdminContext must be used within AdminProvider");
+
+    return context
+}
+
+export { useAdminContext, AdminProvider }
